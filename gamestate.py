@@ -1,5 +1,8 @@
+# Please use this implementation for compatability with the test cases
+
 from copy import deepcopy
 
+call_counter = 0
 xlim, ylim = 3, 2  # board dimensions
 
 # The eight movement directions possible for a chess queen
@@ -33,6 +36,11 @@ class GameState:
         self._parity = 0
         self._player_locations = [None, None]
 
+    @property
+    def hashable(self):
+        from itertools import chain
+        return tuple(chain(*self._board)) + tuple(self._player_locations) + (self._parity, )
+
     def actions(self):
         """ Return a list of legal actions for the active player """
         return self.liberties(self._player_locations[self._parity])
@@ -60,6 +68,8 @@ class GameState:
         player has no remaining liberties (even if the
         player is not active in the current state)
         """
+        global call_counter
+        call_counter += 1
         return (not self._has_liberties(self._parity)
                 or not self._has_liberties(1 - self._parity))
 

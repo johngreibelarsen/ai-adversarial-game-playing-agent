@@ -1,8 +1,7 @@
 from minimax_helpers import *
 
 
-# Solution using an explicit loop based on max_value()
-def _minimax_decision(gameState):
+def minimax_decision(gameState, depth):
     """ Return the move along a branch of the game tree that
     has the best possible value.  A move is a pair of coordinates
     in (column, row) order corresponding to a legal move for
@@ -13,17 +12,17 @@ def _minimax_decision(gameState):
     """
     best_score = float("-inf")
     best_move = None
-    for m in gameState.actions():
-        v = min_value(gameState.result(m))
+    for a in gameState.actions():
+
+        # call has been updated with a depth limit
+        v = minimax_min_value(gameState.result(a), depth - 1)
         if v > best_score:
             best_score = v
-            best_move = m
+            best_move = a
     return best_move
 
 
-# This solution does the same thing using the built-in `max` function
-# Note that "lambda" expressions are Python's version of anonymous functions
-def minimax_decision(gameState):
+def alpha_beta_search(gameState):
     """ Return the move along a branch of the game tree that
     has the best possible value.  A move is a pair of coordinates
     in (column, row) order corresponding to a legal move for
@@ -32,6 +31,14 @@ def minimax_decision(gameState):
     You can ignore the special case of calling this function
     from a terminal state.
     """
-    # The built in `max()` function can be used as argmax!
-    return max(gameState.actions(),
-               key=lambda m: min_value(gameState.result(m)))
+    alpha = float("-inf")
+    beta = float("inf")
+    best_score = float("-inf")
+    best_move = None
+    for a in gameState.actions():
+        v = ab_min_value(gameState.result(a), alpha, beta)
+        alpha = max(alpha, v)
+        if v > best_score:
+            best_score = v
+            best_move = a
+    return best_move
